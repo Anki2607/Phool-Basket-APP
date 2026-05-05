@@ -22,7 +22,7 @@ import { AddressProvider } from './context/AddressContext';
 
 // --- 2. SCREEN IMPORTS ---
 import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/LoginScreen'; // Temporary mapping
+import RegisterScreen from './screens/RegisterScreen';
 import MainTabNavigator from './navigation/MainTabNavigator';
 import ProductDetailsScreen from './screens/ProductDetailsScreen';
 import CartScreen from './screens/CartScreen';

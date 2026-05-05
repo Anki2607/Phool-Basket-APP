@@ -3,16 +3,29 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingVi
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../context/UserContext';
+import { Alert } from 'react-native';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const { updateUser } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // Mock login logic
-    navigation.navigate('Profile');
+    // 1. Validation
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+
+    // 2. Mock Login Action
+    // In a real app, you'd verify credentials here
+    updateUser({ email: email });
+    
+    // 3. Navigation
+    navigation.navigate('MainTabs');
   };
 
   return (
@@ -98,7 +111,7 @@ const LoginScreen = () => {
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Don't have an account? </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                 <Text style={styles.signupLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>
