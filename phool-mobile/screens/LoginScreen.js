@@ -1,0 +1,208 @@
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+
+const LoginScreen = () => {
+  const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = () => {
+    // Mock login logic
+    navigation.navigate('Profile');
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <ArrowLeft size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.brandContainer}>
+            <Text style={[styles.logoText, { color: '#D32F2F' }]}>PHOOL </Text>
+            <Text style={[styles.logoText, { color: '#FFA000' }]}>BASKET</Text>
+            <Text style={styles.subtitle}>Welcome back! Please login to your account.</Text>
+          </View>
+
+          <View style={styles.formContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email Address</Text>
+              <View style={styles.inputWrapper}>
+                <Mail size={20} color="#757575" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Password</Text>
+              <View style={styles.inputWrapper}>
+                <Lock size={20} color="#757575" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your password"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} color="#757575" />
+                  ) : (
+                    <Eye size={20} color="#757575" />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
+
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account? </Text>
+              <TouchableOpacity>
+                <Text style={styles.signupLink}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  header: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  backButton: {
+    padding: 10,
+    marginLeft: -10,
+  },
+  brandContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  logoText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#757575',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  formContainer: {
+    width: '100%',
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 12,
+    backgroundColor: '#f9f9f9',
+    paddingHorizontal: 15,
+  },
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    color: '#333',
+  },
+  eyeIcon: {
+    padding: 10,
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginBottom: 30,
+  },
+  forgotPasswordText: {
+    color: '#D32F2F',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  loginButton: {
+    backgroundColor: '#D32F2F',
+    borderRadius: 25,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#D32F2F',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  signupText: {
+    color: '#757575',
+    fontSize: 14,
+  },
+  signupLink: {
+    color: '#D32F2F',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+});
+
+export default LoginScreen;

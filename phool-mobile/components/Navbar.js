@@ -3,10 +3,13 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import { Search, MapPin, Heart, ShoppingCart, User, Bell } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const Navbar = () => {
   const navigation = useNavigation();
   const { cartCount } = useCart();
+  const { favorites } = useFavorites();
+  const favCount = favorites.length;
 
   return (
     <View style={styles.navbar}>
@@ -19,11 +22,24 @@ const Navbar = () => {
           <Text style={[styles.logoText, { color: '#FFA000' }]}>BASKET</Text>
         </TouchableOpacity>
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.actionItem}>
+          <TouchableOpacity 
+            style={styles.actionItem}
+            onPress={() => navigation.navigate('Notifications')}
+          >
             <Bell size={20} color="#333" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionItem}>
-            <Heart size={20} color="#333" />
+          <TouchableOpacity 
+            style={styles.actionItem}
+            onPress={() => navigation.navigate('Favorites')}
+          >
+            <View>
+              <Heart size={20} color="#333" />
+              {favCount > 0 && (
+                <View style={styles.cartBadge}>
+                  <Text style={styles.cartBadgeText}>{favCount}</Text>
+                </View>
+              )}
+            </View>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.actionItem}
@@ -38,7 +54,10 @@ const Navbar = () => {
               )}
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionItem}>
+          <TouchableOpacity 
+            style={styles.actionItem}
+            onPress={() => navigation.navigate('Profile')}
+          >
             <User size={20} color="#333" />
           </TouchableOpacity>
         </View>
