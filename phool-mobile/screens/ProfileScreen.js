@@ -1,10 +1,22 @@
+/**
+ * PROFILE SCREEN
+ * 
+ * FEATURES:
+ * - User Profile Management
+ * - Activity Stats (Orders, Liked items)
+ * - Seller Central Access
+ * - Account Settings & Support
+ */
+
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Settings, ChevronRight, Package, MapPin, CreditCard, Bell, HelpCircle, LogOut } from 'lucide-react-native';
+import { ArrowLeft, Settings, ChevronRight, Package, MapPin, CreditCard, Bell, HelpCircle, LogOut, TrendingUp, Heart } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../context/UserContext';
+import { useFavorites } from '../context/FavoritesContext';
 
+// --- 1. SUB-COMPONENTS ---
 const ProfileOption = ({ icon: Icon, title, subtitle, onPress, color = '#333' }) => (
   <TouchableOpacity style={styles.optionContainer} onPress={onPress}>
     <View style={[styles.iconContainer, { backgroundColor: color + '15' }]}>
@@ -19,11 +31,15 @@ const ProfileOption = ({ icon: Icon, title, subtitle, onPress, color = '#333' })
 );
 
 const ProfileScreen = () => {
+  // --- 2. HOOKS & STATE ---
   const navigation = useNavigation();
   const { user } = useUser();
+  const { favorites } = useFavorites();
+  const favCount = favorites.length;
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* 3. HEADER SECTION */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -38,6 +54,7 @@ const ProfileScreen = () => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        {/* 4. USER INFO SECTION */}
         <View style={styles.profileHeader}>
           <TouchableOpacity 
             style={styles.avatarContainer}
@@ -56,6 +73,7 @@ const ProfileScreen = () => {
           <Text style={styles.userPhone}>{user.phone}</Text>
         </View>
 
+        {/* 5. STATS SECTION */}
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statNumber}>12</Text>
@@ -63,8 +81,8 @@ const ProfileScreen = () => {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>3</Text>
-            <Text style={styles.statLabel}>Addresses</Text>
+            <Text style={styles.statNumber}>{favCount}</Text>
+            <Text style={styles.statLabel}>Liked</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statBox}>
@@ -73,6 +91,25 @@ const ProfileScreen = () => {
           </View>
         </View>
 
+        {/* 6. SELLER CENTRAL SECTION */}
+        <View style={styles.sellerSection}>
+          <View style={styles.sellerCard}>
+            <View style={styles.sellerCardHeader}>
+              <TrendingUp size={20} color="#fff" />
+              <Text style={styles.sellerCardTag}>STOREFRONT READY FOR CUSTOMERS</Text>
+            </View>
+            <Text style={styles.sellerCardTitle}>Grow your business with Phool Basket</Text>
+            <TouchableOpacity 
+              style={styles.sellerBtn}
+              onPress={() => navigation.navigate('SellerDashboard')}
+            >
+              <Text style={styles.sellerBtnText}>Seller Dashboard</Text>
+              <ArrowLeft size={18} color="#6B38FB" style={{ transform: [{ rotate: '180deg' }] }} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 7. ACCOUNT SETTINGS SECTION */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account Settings</Text>
           <ProfileOption 
@@ -87,18 +124,21 @@ const ProfileScreen = () => {
             title="Saved Addresses" 
             subtitle="Manage your delivery locations"
             color="#2196F3"
+            onPress={() => navigation.navigate('Addresses')}
           />
           <ProfileOption 
             icon={CreditCard} 
             title="Payment Methods" 
             subtitle="Manage your saved cards"
             color="#FF9800"
+            onPress={() => navigation.navigate('PaymentMethods')}
           />
           <ProfileOption 
-            icon={Bell} 
-            title="Notifications" 
-            subtitle="Alerts and updates"
-            color="#9C27B0"
+            icon={Heart} 
+            title="My Favorites" 
+            subtitle="Items you've liked"
+            color="#D32F2F"
+            onPress={() => navigation.navigate('Favorites')}
           />
         </View>
 
@@ -126,6 +166,7 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  // --- CORE STYLES ---
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
@@ -285,6 +326,53 @@ const styles = StyleSheet.create({
   versionText: {
     color: '#bdbdbd',
     fontSize: 12,
+  },
+  sellerSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  sellerCard: {
+    backgroundColor: '#6B38FB',
+    borderRadius: 20,
+    padding: 20,
+    elevation: 5,
+    shadowColor: '#6B38FB',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  sellerCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sellerCardTag: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginLeft: 10,
+    letterSpacing: 1,
+  },
+  sellerCardTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    lineHeight: 24,
+  },
+  sellerBtn: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 8,
+  },
+  sellerBtnText: {
+    color: '#6B38FB',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 

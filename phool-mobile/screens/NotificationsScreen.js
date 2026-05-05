@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Bell, Gift, Package, Tag, Info } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 
+// --- NOTIFICATION TYPES & MOCK DATA ---
 const MOCK_NOTIFICATIONS = [
   {
     id: '1',
@@ -65,9 +66,32 @@ const getIconBackgroundColor = (type) => {
 
 const NotificationsScreen = () => {
   const navigation = useNavigation();
+  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [filter, setFilter] = useState('all');
+
+  const filteredNotifications = notifications.filter(n =>
+    filter === 'all' ? true : (filter === 'orders' ? n.type === 'order' : n.type === 'promo')
+  );
+
+  const markAsRead = (id) => {
+    setNotifications(notifications.map(n =>
+      n.id === id ? { ...n, read: true } : n
+    ));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  };
+
+  const deleteNotification = (id) => {
+    setNotifications(notifications.filter(n => n.id !== id));
+  };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={[styles.notificationCard, !item.read && styles.unreadCard]}>
+    <TouchableOpacity
+      style={[styles.notificationCard, !item.read && styles.unreadCard]}
+      onPress={() => markAsRead(item.id)}
+    >
       <View style={[styles.iconContainer, { backgroundColor: getIconBackgroundColor(item.type) }]}>
         {getIconForType(item.type)}
       </View>
@@ -81,7 +105,12 @@ const NotificationsScreen = () => {
         <Text style={styles.description} numberOfLines={2}>
           {item.description}
         </Text>
-        <Text style={styles.timeText}>{item.time}</Text>
+        <View style={styles.footerRow}>
+          <Text style={styles.timeText}>{item.time}</Text>
+          <TouchableOpacity onPress={() => deleteNotification(item.id)}>
+            <Text style={styles.deleteText}>Delete</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -89,18 +118,36 @@ const NotificationsScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <ArrowLeft size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>
-        <View style={{ width: 24 }} /> {/* Empty view for balance */}
+        <TouchableOpacity onPress={markAllAsRead}>
+          <Text style={styles.markAllText}>Read All</Text>
+        </TouchableOpacity>
       </View>
 
+      {/* 5. CATEGORY FILTERS */}
+      <View style={styles.filterContainer}>
+        {['all', 'orders', 'offers'].map((type) => (
+          <TouchableOpacity
+            key={type}
+            style={[styles.filterTab, filter === type && styles.activeTab]}
+            onPress={() => setFilter(type)}
+          >
+            <Text style={[styles.filterTabText, filter === type && styles.activeTabText]}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* 6. NOTIFICATION LIST */}
       <FlatList
-        data={MOCK_NOTIFICATIONS}
+        data={filteredNotifications}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
@@ -108,7 +155,7 @@ const NotificationsScreen = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Bell size={64} color="#e0e0e0" />
-            <Text style={styles.emptyText}>No notifications yet</Text>
+            <Text style={styles.emptyText}>No {filter !== 'all' ? filter : ''} notifications</Text>
             <Text style={styles.emptySubtext}>When you get notifications, they'll show up here.</Text>
           </View>
         }
@@ -118,6 +165,7 @@ const NotificationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  // --- CORE STYLES ---
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
@@ -134,10 +182,36 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 5,
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+  markAllText: {
+    fontSize: 14,
+    color: '#D32F2F',
+    fontWeight: '600',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  filterTab: {
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: '#f5f5f5',
+  },
+  activeTab: {
+    backgroundColor: '#D32F2F',
+  },
+  filterTabText: {
+    fontSize: 13,
+    color: '#666',
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: '#fff',
   },
   listContainer: {
     flexGrow: 1,
@@ -157,9 +231,9 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   unreadCard: {
-    backgroundColor: '#F3E5F5', // Light purple tint for unread
+    backgroundColor: '#FFF8F8', // Light red tint for unread
     borderLeftWidth: 3,
-    borderLeftColor: '#9C27B0',
+    borderLeftColor: '#D32F2F',
   },
   iconContainer: {
     width: 50,
@@ -179,20 +253,19 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '600',
     color: '#333',
     flex: 1,
   },
   unreadText: {
-    fontWeight: 'bold',
     color: '#000',
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#9C27B0',
+    backgroundColor: '#D32F2F',
     marginLeft: 8,
   },
   description: {
@@ -201,9 +274,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     lineHeight: 18,
   },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   timeText: {
     fontSize: 11,
     color: '#999',
+  },
+  deleteText: {
+    fontSize: 11,
+    color: '#D32F2F',
+    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -32,8 +32,19 @@ const LoginScreen = () => {
           </View>
 
           <View style={styles.brandContainer}>
-            <Text style={[styles.logoText, { color: '#D32F2F' }]}>PHOOL </Text>
-            <Text style={[styles.logoText, { color: '#FFA000' }]}>BASKET</Text>
+            <View style={styles.logoRow}>
+              <View style={styles.logoIconContainer}>
+                <Image 
+                  source={require('../assets/logo.jpg')} 
+                  style={styles.logoIcon} 
+                  resizeMode="cover"
+                />
+              </View>
+              <View style={styles.brandTextContainer}>
+                <Text style={styles.brandTitle}>Phool Basket</Text>
+                <Text style={styles.brandSubtitle}>GIFTS & FLOWERS</Text>
+              </View>
+            </View>
             <Text style={styles.subtitle}>Welcome back! Please login to your account.</Text>
           </View>
 
@@ -120,9 +131,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  logoText: {
-    fontSize: 32,
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  logoIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#f0f0f0',
+    marginRight: 15,
+  },
+  logoIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  brandTextContainer: {
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#6B38FB',
+    lineHeight: 30,
+  },
+  brandSubtitle: {
+    fontSize: 14,
     fontWeight: 'bold',
+    color: '#00A651',
+    letterSpacing: 1,
   },
   subtitle: {
     fontSize: 14,

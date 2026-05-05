@@ -9,8 +9,11 @@ const MOCK_ORDERS = [
     id: 'PB-10293',
     date: '24 May 2026',
     status: 'Delivered',
-    total: '₹1,299',
-    items: 3,
+    total: '1,299',
+    items: [
+      { name: 'Mixed Roses & Lilies Bouquet', price: 899, quantity: 1, image: 'https://images.unsplash.com/photo-1522673607200-16488352475b?w=400&q=80' },
+      { name: 'Chocolate Box', price: 400, quantity: 1, image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=400&q=80' }
+    ],
     image: 'https://images.unsplash.com/photo-1522673607200-16488352475b?w=400&q=80',
     productName: 'Mixed Roses & Lilies Bouquet',
   },
@@ -18,8 +21,10 @@ const MOCK_ORDERS = [
     id: 'PB-10285',
     date: '15 May 2026',
     status: 'Shipped',
-    total: '₹849',
-    items: 1,
+    total: '849',
+    items: [
+      { name: 'Red Rose Bouquet', price: 849, quantity: 1, image: 'https://images.unsplash.com/photo-1561181286-d3efa7dcca1a?w=400&q=80' }
+    ],
     image: 'https://images.unsplash.com/photo-1561181286-d3efa7dcca1a?w=400&q=80',
     productName: 'Red Rose Bouquet',
   },
@@ -27,8 +32,10 @@ const MOCK_ORDERS = [
     id: 'PB-10271',
     date: '02 May 2026',
     status: 'Cancelled',
-    total: '₹2,100',
-    items: 5,
+    total: '2,100',
+    items: [
+      { name: 'Luxury Orchid Arrangement', price: 2100, quantity: 1, image: 'https://images.unsplash.com/photo-1591880911703-f8420e8d812c?w=400&q=80' }
+    ],
     image: 'https://images.unsplash.com/photo-1591880911703-f8420e8d812c?w=400&q=80',
     productName: 'Luxury Orchid Arrangement',
   },
@@ -69,7 +76,10 @@ const OrdersScreen = () => {
   const navigation = useNavigation();
 
   const renderOrderItem = ({ item }) => (
-    <TouchableOpacity style={styles.orderCard}>
+    <TouchableOpacity 
+      style={styles.orderCard}
+      onPress={() => navigation.navigate('OrderDetails', { order: item })}
+    >
       <View style={styles.orderHeader}>
         <View>
           <Text style={styles.orderId}>Order #{item.id}</Text>
@@ -82,14 +92,17 @@ const OrdersScreen = () => {
         <Image source={{ uri: item.image }} style={styles.productImage} />
         <View style={styles.orderDetails}>
           <Text style={styles.productName} numberOfLines={1}>{item.productName}</Text>
-          <Text style={styles.itemCount}>{item.items} {item.items > 1 ? 'items' : 'item'}</Text>
-          <Text style={styles.orderTotal}>{item.total}</Text>
+          <Text style={styles.itemCount}>{item.items.length} {item.items.length > 1 ? 'items' : 'item'}</Text>
+          <Text style={styles.orderTotal}>₹{item.total}</Text>
         </View>
         <ChevronRight size={20} color="#bdbdbd" />
       </View>
       
       <View style={styles.orderFooter}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => navigation.navigate('OrderDetails', { order: item })}
+        >
           <Text style={styles.actionButtonText}>View Details</Text>
         </TouchableOpacity>
         {item.status === 'Delivered' && (
